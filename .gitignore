@@ -1,0 +1,19 @@
+# 依赖
+.venv/
+
+# 打包输出
+dist/
+build/
+output/
+
+# 临时文件
+*.log
+temp/
+tmp/
+.DS_Store
+
+# 编辑器
+.idea/
+.vscode/
+*.swp
+*.swo
