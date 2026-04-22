@@ -1,4 +1,4 @@
-from src.utils.Extend import extend_library
+from src.utils.extend import extend_library
 
 
 AutomationLibrary='\n_C=\'middle\'\n_B=False\n_A=None\nimport time,pyautogui,pyperclip\npyautogui.FAILSAFE=_B\ndef click(clicks=1,interval=0,x=_A,y=_A,button=\'左\'):\n\tC=interval;B=clicks\n\ttry:\n\t\tD={\'左\':\'left\',\'右\':\'right\',\'中\':_C};A=D.get(button)\n\t\tif A:\n\t\t\tif x is _A and y is _A:pyautogui.click(clicks=B,interval=C,button=A)\n\t\t\telse:pyautogui.click(x,y,clicks=B,interval=C,button=A)\n\texcept Exception as E:print(f"鼠标单击时发生错误: {E}")\ndef move(x,y,moveType=\'屏幕\'):\n\tA=moveType\n\ttry:\n\t\tif A==\'屏幕\':pyautogui.moveTo(x,y)\n\t\telif A==\'相对\':pyautogui.move(x,y,duration=0,tween=pyautogui.linear)\n\texcept Exception as B:print(f"鼠标移动时发生错误: {B}")\ndef scroll(clicks=1):\n\ttry:pyautogui.scroll(clicks)\n\texcept Exception as A:print(f"鼠标滚轮滚动时发生错误: {A}")\ndef press(action=\'按下\',button=\'左\'):\n\ttry:\n\t\tB={\'左\':\'left\',\'右\':\'right\',\'中\':_C};A=B.get(button)\n\t\tif A:\n\t\t\tif action==\'按下\':pyautogui.mouseDown(button=A)\n\t\t\telse:pyautogui.mouseUp(button=A)\n\texcept Exception as C:print(f"鼠标按下时发生错误: {C}")\ndef keyPress(*A):\n\ttry:pyautogui.hotkey(*A)\n\texcept Exception as B:print(f"键盘按下时发生错误: {B}")\ndef keyInput(text=\'\',index=1,interval=0):\n\tA=index\n\ttry:\n\t\tfor B in range(0,len(text),A):pyperclip.copy(text[B:B+A]);pyautogui.hotkey(\'ctrl\',\'v\');time.sleep(interval)\n\texcept Exception as C:print(f"键盘输入时发生错误: {C}")\ndef AutomationLibrary(operation,*C):\n\tA=operation;D={\'鼠标单击\':click,\'鼠标移动\':move,\'鼠标滚轮\':scroll,\'鼠标操作\':press,\'键盘操作\':keyPress,\'键盘输入\':keyInput,\'帮助\':helpAutomationLibrary}\n\ttry:\n\t\tB=D.get(A)\n\t\tif B:return B(*C)\n\t\telse:print(f"未知的自动化操作: {A}");return _B\n\texcept Exception as E:print(f"执行自动化操作 {A} 时发生错误: {E}");return _B\ndef helpAutomationLibrary():print(\'\\n\'+\'=\'*60+\'自动化库使用说明\'+\'=\'*60+\'\\n\');print("\\n该库提供了一个函数, 自动化*, 用于执行各种类型的自动化操作。\\n\\n自动化* 支持的操作类型包括:\\n1.鼠标单击\\n2.鼠标移动\\n3.鼠标滚轮\\n4.鼠标操作\\n5.键盘操作\\n6.键盘输入\\n7.帮助\\n\\n使用方法:\\n导入该库: @自动化库\\n\\n1.鼠标单击: 自动化*(\'鼠标单击\', 点击次数(默认1), 间隔时间(默认0), x坐标(默认None), y坐标(默认None), 按钮(默认\'左\', 可选\'左/右/中\'))\\n代码演示: 自动化*(\'鼠标单击\', 2, 0.5, 100, 100, \'左\')\\n运行结果: 鼠标单击屏幕坐标(100, 100) 2次, 间隔0.5秒, 鼠标右键单击\\n\\n2.鼠标移动: 自动化*(\'鼠标移动\', x坐标, y坐标, 移动类型(默认\'屏幕\', 可选\'屏幕/相对\'))\\n代码演示: 自动化*(\'鼠标移动\', 100, 100, \'相对\')\\n运行结果: 鼠标相对自己位置移动(100, 100)\\n\\n3.鼠标滚轮: 自动化*(\'鼠标滚轮\', 滚动次数(默认1))\\n代码演示: 自动化*(\'鼠标滚轮\', -100)\\n运行结果: 鼠标滚轮滚动向下100次\\n\\n4.鼠标操作: 自动化*(\'鼠标操作\', 操作(默认\'按下\', 可选\'按下/松开\'), 按钮(默认\'左\', 可选\'左/右/中\'))\\n代码演示: 自动化*(\'鼠标操作\', \'松开\', \'右\')\\n运行结果: 鼠标右键松开\\n\\n5.键盘操作: 自动化*(\'键盘操作\', 按键)\\n代码演示: 自动化*(\'键盘操作\', \'ctrl\', \'c\')\\n运行结果: 按下ctrl和c键\\n\\n6.键盘输入: 自动化*(\'键盘输入\', 输入内容, 输入速度(默认1), 间隔时间(默认0)\\n代码演示: 自动化*(\'键盘输入\', \'hello world\', 2, 0.1)\\n运行结果: 输入\'hello world\' 每次输出2个字符, 每次间隔0.1秒\\n\\n7.帮助: 自动化*(\'帮助\')\\n代码演示: 自动化*(\'帮助\')\\n运行结果: 显示该帮助文档\\n\\n注: 坐标系以左上角为原点, x轴向右为正, y轴向下为正, 坐标单位为像素。\\n\\n")\n'
@@ -29,12 +29,12 @@ Helps()
 
 
 # 内置库
-BuiltinLibraries = {}
+builtins = {}
 
 All = DocumentLibrary + SystemLibrary + NetworkLibrary + InterfaceLibrary + AutomationLibrary + ConcurrentLibraries + Decorator
 
 # 基础库
-BuiltinLibraries.update(
+builtins.update(
     {
         "@库": All,
         "@帮助": Helps,
@@ -51,4 +51,4 @@ BuiltinLibraries.update(
 
 
 # 扩展库
-extend_library(BuiltinLibraries)
+extend_library(builtins)
