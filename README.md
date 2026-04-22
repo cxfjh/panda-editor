@@ -36,12 +36,6 @@
 
 - [更新日志](docs/CHANGELOG.md)。
 
-## 联系我们
-
-如果您对熊猫文本编辑器有任何问题或建议，欢迎随时联系我们：
-
-- 邮箱：2449579731@qq.com
-
 ## 下载可执行文件
 
 - [123云盘下载地址](https://www.123pan.com/s/IzrNjv-cAd7A)
@@ -50,7 +44,22 @@
 
 - [PandaEditor](https://cxfjh.github.io)
 
-## 开源协议
+## 贡献
 
-- 熊猫文本编辑器使用 [GPL v3](https://www.gnu.org/licenses/gpl-3.0.html) 许可证.
+欢迎提交 Issue 和 Pull Request 来改进此项目！
 
+## 许可证
+
+本项目采用 GPL v3 许可证 - 请参阅 [LICENSE](./LICENSE) 文件了解详细信息。
+
+## 支持
+
+如果您遇到问题或有任何建议，请：
+
+- 查看 [Issues](https://github.com/cxfjh/panda-editor/issues) 页面
+- 提交新的 Issue
+- 发送邮件至 2449579731@qq.com
+
+## 致谢
+
+感谢所有为此项目做出贡献的人们。
