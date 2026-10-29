@@ -1,0 +1,6 @@
+/.venv/
+/.idea/
+/build/
+/*.exe
+/code/
+/Environment/log/

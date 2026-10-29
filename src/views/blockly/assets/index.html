@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<title>积木编程</title>
+	<style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #1e1f22;
+            --panel-bg: #2b2d30;
+            --border: #3c3f41;
+            --text: #E8E8E8;
+            --text-dim: #A9B7C6;
+            --text-faint: #7A828C;
+            --row-hover: rgba(255, 255, 255, 0.055);
+            --row-active: rgba(86, 156, 222, 0.16);
+            --divider: rgba(255, 255, 255, 0.16);
+            --accent: #569CDE;
+            --scroll-thumb: rgba(255, 255, 255, 0.16);
+        }
+
+        body.light-theme {
+            background-color: #ffffff;
+            --panel-bg: #F3F4F6;
+            --border: #D1D5DB;
+            --text: #1E1E1E;
+            --text-dim: #4B5563;
+            --text-faint: #8A9099;
+            --row-hover: rgba(0, 0, 0, 0.05);
+            --row-active: rgba(30, 80, 180, 0.12);
+            --divider: rgba(0, 0, 0, 0.16);
+            --accent: #1E50B4;
+            --scroll-thumb: rgba(0, 0, 0, 0.18);
+        }
+
+        #blockly_div {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .blocklyToolboxDiv {
+            padding: 6px 0 12px;
+            border-right: 1px solid var(--border);
+            scrollbar-width: thin;
+            scrollbar-color: var(--scroll-thumb) transparent;
+        }
+
+        .blocklyToolboxDiv::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .blocklyToolboxDiv::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .blocklyToolboxDiv::-webkit-scrollbar-thumb {
+            border: 2px solid transparent;
+            border-radius: 6px;
+            background-clip: content-box;
+            background-color: var(--scroll-thumb);
+        }
+
+        .blocklyToolboxDiv::-webkit-scrollbar-thumb:hover {
+            background-color: var(--accent);
+        }
+
+        .blocklyTreeRow {
+            height: 30px;
+            line-height: 30px;
+            margin: 1px 8px 1px 0;
+            border-radius: 0 8px 8px 0;
+            /* 分类色条由 Blockly 内联给出 8px, 收窄到 5px 更秀气 */
+            border-left-width: 5px !important;
+            transition: background-color 120ms ease;
+        }
+
+        .blocklyTreeRow:hover {
+            background-color: var(--row-hover);
+        }
+
+        .blocklyToolboxCategory[aria-selected="true"] > .blocklyTreeRow {
+            background-color: var(--row-active);
+        }
+
+        .blocklyTreeLabel {
+            padding-left: 1px;
+            color: var(--text-dim);
+            font-size: 12.5px;
+            transition: color 120ms ease;
+        }
+
+        .blocklyTreeRow:hover .blocklyTreeLabel {
+            color: var(--text);
+        }
+
+        .blocklyToolboxCategory[aria-selected="true"] .blocklyTreeLabel {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* 三大模块之间的分隔: 基础积木 / 函数库 / 内置扩展库 */
+        .blocklyToolboxCategory.cn-toolbox-divider {
+            position: relative;
+            margin-top: 12px;
+        }
+
+        .blocklyToolboxCategory.cn-toolbox-divider::before {
+            content: "";
+            position: absolute;
+            top: var(--cn-divider-top, -6px);
+            left: 13px;
+            right: 14px;
+            height: 1px;
+            background: var(--divider);
+        }
+
+        pattern[id^="blocklyGridPattern"] line {
+            stroke: rgba(255, 255, 255, 0.075) !important;
+        }
+
+        body.light-theme pattern[id^="blocklyGridPattern"] line {
+            stroke: rgba(0, 0, 0, 0.075) !important;
+        }
+
+        /* 画布上的缩放按钮与垃圾桶: 常态淡出, 悬停提亮 */
+        .blocklyZoom,
+        .blocklyTrash {
+            opacity: 0.55;
+            transition: opacity 150ms ease;
+        }
+
+        .blocklyZoom:hover,
+        .blocklyTrash:hover {
+            opacity: 0.95;
+        }
+
+        #cn-empty-hint {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 180ms ease;
+        }
+
+        #cn-empty-hint[hidden] {
+            display: none;
+        }
+
+        .cn-empty-title {
+            color: var(--text-dim);
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+            font-size: 14px;
+        }
+
+        .cn-empty-sub {
+            color: var(--text-faint);
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+            font-size: 12px;
+        }
+
+        /* Blockly 自带的工具箱文字与下拉框按主题修正, 避免中文被截断 */
+        .blocklyTreeLabel,
+        .blocklyText,
+        .blocklyMenuItem {
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+        }
+
+        /* 页面内对话框: 原生 prompt 在深色主题下黑底黑字, 改用自绘浮层 */
+        .cn-dialog-mask {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.45);
+        }
+
+        .cn-dialog-mask[hidden] {
+            display: none;
+        }
+
+        .cn-dialog {
+            box-sizing: border-box;
+            width: 300px;
+            max-width: 90%;
+            padding: 14px 16px 12px;
+            border: 1px solid #3c3f41;
+            border-radius: 4px;
+            background-color: #2b2d30;
+            color: #E8E8E8;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+            font-size: 13px;
+        }
+
+        .cn-dialog-title {
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .cn-dialog-message {
+            margin-bottom: 10px;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+
+        .cn-dialog-input {
+            box-sizing: border-box;
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 5px 8px;
+            border: 1px solid #515356;
+            border-radius: 3px;
+            background-color: #1e1f22;
+            color: #E8E8E8;
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .cn-dialog-input:focus {
+            border-color: #569CDE;
+        }
+
+        .cn-dialog-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .cn-dialog-button {
+            min-width: 62px;
+            padding: 4px 12px;
+            border: 1px solid #515356;
+            border-radius: 3px;
+            background-color: transparent;
+            color: #E8E8E8;
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .cn-dialog-button:hover {
+            background-color: #3a3d41;
+        }
+
+        .cn-dialog-button.primary {
+            border-color: #569CDE;
+            background-color: #569CDE;
+            color: #FFFFFF;
+        }
+
+        .cn-dialog-button.primary:hover {
+            background-color: #6BAEEF;
+        }
+
+        /* 浅色主题下的对话框配色 */
+        body.light-theme .cn-dialog {
+            border-color: #D1D5DB;
+            background-color: #FFFFFF;
+            color: #1E1E1E;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+        }
+
+        body.light-theme .cn-dialog-input {
+            border-color: #C0C0C0;
+            background-color: #FFFFFF;
+            color: #1E1E1E;
+        }
+
+        body.light-theme .cn-dialog-input:focus {
+            border-color: #1E50B4;
+        }
+
+        body.light-theme .cn-dialog-button {
+            border-color: #C0C0C0;
+            color: #1E1E1E;
+        }
+
+        body.light-theme .cn-dialog-button:hover {
+            background-color: #EFEFEF;
+        }
+
+        body.light-theme .cn-dialog-button.primary {
+            border-color: #1E50B4;
+            background-color: #1E50B4;
+            color: #FFFFFF;
+        }
+	</style>
+</head>
+<body>
+	<div id="blockly_div"></div>
+	<div id="cn-empty-hint">
+		<div class="cn-empty-title">从左侧分类里拖出积木开始拼搭</div>
+		<div class="cn-empty-sub">也可以点「加载积木」恢复上次保存的工程</div>
+	</div>
+	<script src="blockly/blockly_compressed.js"></script>
+	<script src="blockly/msg/zh-hans.js"></script>
+	<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+	<script src="js/dialog.js"></script>
+	<script src="js/lib_blocks.js"></script>
+	<script src="js/blocks.js"></script>
+	<script src="js/generator.js"></script>
+	<script src="js/bridge.js"></script>
+</body>
+</html>
