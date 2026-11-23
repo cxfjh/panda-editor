@@ -1,0 +1,6 @@
+.venv/
+.idea/
+build/
+code/
+Environment/log/
+docs/CODE_STYLE.md

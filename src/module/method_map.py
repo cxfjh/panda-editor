@@ -1,0 +1,42 @@
+"""对象方法映射表"""
+
+method = { }
+
+method.update(
+    {
+        "追加": "append",
+        "插入": "insert",
+        "弹出": "pop",
+        "删除": "remove",
+        "清空": "clear",
+        "反转": "reverse",
+        "排序": "sort",
+        "计数": "count",
+        "扩展": "extend",
+        "索引": "index",
+        "取键": "keys",
+        "取值": "values",
+        "取项": "items",
+        "更新": "update",
+        "获取": "get",
+        "设默认": "setdefault",
+        "分割": "split",
+        "连接": "join",
+        "替换": "replace",
+        "查找": "find",
+        "大写": "upper",
+        "小写": "lower",
+        "去空格": "strip",
+        "开头匹配": "startswith",
+        "结尾匹配": "endswith",
+        "读取": "read",
+        "读取行": "readline",
+        "写入": "write",
+        "关闭": "close",
+        "添加": "add",
+        "丢弃": "discard",
+        "交集": "intersection",
+        "并集": "union",
+        "差集": "difference",
+    },
+)
